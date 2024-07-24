@@ -1,29 +1,29 @@
 const actions = [
-  {
-    id: 1,
-    action: "Eating a hamburger",
-    points: Math.floor(Math.random() * 20001) - 10000,
-  },
-  {
-    id: 2,
-    action: "Planting a tree",
-    points: Math.floor(Math.random() * 20001) - 10000,
-  },
-  {
-    id: 3,
-    action: "Using public transportation",
-    points: Math.floor(Math.random() * 20001) - 10000,
-  },
-  {
-    id: 4,
-    action: "Recycling plastic",
-    points: Math.floor(Math.random() * 20001) - 10000,
-  },
-  {
-    id: 5,
-    action: "Donating to charity",
-    points: Math.floor(Math.random() * 20001) - 10000,
-  },
+  // {
+  //   id: 1,
+  //   action: "Eating a hamburger",
+  //   points: Math.floor(Math.random() * 20001) - 10000,
+  // },
+  // {
+  //   id: 2,
+  //   action: "Planting a tree",
+  //   points: Math.floor(Math.random() * 20001) - 10000,
+  // },
+  // {
+  //   id: 3,
+  //   action: "Using public transportation",
+  //   points: Math.floor(Math.random() * 20001) - 10000,
+  // },
+  // {
+  //   id: 4,
+  //   action: "Recycling plastic",
+  //   points: Math.floor(Math.random() * 20001) - 10000,
+  // },
+  // {
+  //   id: 5,
+  //   action: "Donating to charity",
+  //   points: Math.floor(Math.random() * 20001) - 10000,
+  // },
   //   {
   //     id: 6,
   //     action: "Volunteering at a shelter",
@@ -100,6 +100,9 @@ const actions = [
   //     points: Math.floor(Math.random() * 20001) - 10000,
   //   },
 ];
+
+let userUuid = null;
+
 function getRandomPosition() {
   const min = 20;
   const max = 70;
@@ -134,7 +137,7 @@ function addLayer(action) {
       <h2 class="${action.points > 0 ? "positive" : "negative"}" style="
           opacity: 1; filter: blur(0px); transform: translate(-50%, -50%);
           top: ${positions.top}%; left: ${positions.left}%;
-      ">${action.action} ${action.points}</h2>
+      ">${action.action}: ${action.points > 0 ? `+` : ``}${action.points}</h2>
     `;
 
   layers.insertBefore(layer, layers.firstChild);
@@ -153,64 +156,6 @@ function addLayer(action) {
   recalculateScaleAndOpacity();
 }
 
-// Add all actions to the layers with a 0.5s interval
-actions.forEach((action, index) => {
-  setTimeout(() => {
-    addLayer(action);
-  }, index * 100);
-});
-
-// document.getElementById("debug").addEventListener("click", () => {
-//   addLayer(actions[Math.floor(Math.random() * actions.length)]);
-// });
-
-document
-  .getElementById("input")
-  .addEventListener("keypress", async function (event) {
-    if (event.key === "Enter") {
-      const inputElement = document.getElementById("input");
-      const actionText = inputElement.value.trim();
-
-      if (actionText === "") {
-        return;
-      }
-
-      const apiUrl = "https://thegoodplace-openai-api.tgp-ts.workers.dev/";
-
-      try {
-        inputElement.disabled = true;
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: actionText }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        const aiResponse = JSON.parse(data.response);
-
-        const newAction = {
-          id: actions.length + 1,
-          action: aiResponse.action,
-          points: calculatePoints(aiResponse.severity, aiResponse.factor),
-        };
-
-        addLayer(newAction);
-        inputElement.value = ""; // Clear the input
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        inputElement.disabled = false;
-        inputElement.focus();
-      }
-    }
-  });
-
 function calculatePoints(severity, factor) {
   // Facteur aléatoire pour varier légèrement les points
   const randomFactor = Math.random() * 0.2 + 0.9;
@@ -227,3 +172,154 @@ function calculatePoints(severity, factor) {
     return Math.floor(-severity * factor * randomFactor);
   }
 }
+
+async function sendAction(value) {
+  if (!userUuid) {
+    throw new Error("User UUID is missing");
+  }
+  const inputElement = document.getElementById("input");
+  const apiUrl = "https://thegoodplace-openai-api.tgp-ts.workers.dev/";
+
+  try {
+    inputElement.disabled = true;
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userUuid: userUuid, message: value }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    const aiResponse = data.response;
+
+    const newAction = {
+      id: actions.length + 1,
+      action: aiResponse.action,
+      points: calculatePoints(aiResponse.severity, aiResponse.factor),
+    };
+
+    addLayer(newAction);
+    inputElement.value = ""; // Clear the input
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    inputElement.disabled = false;
+    inputElement.focus();
+  }
+}
+
+async function createUser(value) {
+  //TODO: create a new user
+  const inputElement = document.getElementById("input");
+  const apiUrl = "https://thegoodplace-openai-api.tgp-ts.workers.dev/user";
+
+  try {
+    inputElement.disabled = true;
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: value }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    userUuid = data.userUuid;
+    localStorage.setItem("userUuid", userUuid);
+    inputElement.name = "action";
+    inputElement.placeholder = "Type your sin";
+    inputElement.value = "";
+
+    //hide welcome message
+    hideWelcomeMessage();
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    inputElement.disabled = false;
+    inputElement.focus();
+  }
+}
+
+async function getUser(uuid) {
+  const apiUrl = `https://thegoodplace-openai-api.tgp-ts.workers.dev/user/${uuid}`;
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function hideWelcomeMessage() {
+  const welcomeMessage = document.getElementById("welcome");
+  const input = document.getElementById("input");
+  const reset = document.getElementById("reset");
+  welcomeMessage.style.display = "none";
+  input.name = "action";
+  input.placeholder = "Type your sin";
+  reset.style.display = "block";
+}
+
+document.getElementById("reset").addEventListener("click", function () {
+  localStorage.removeItem("userUuid");
+  window.location.reload();
+});
+
+document
+  .getElementById("input")
+  .addEventListener("keypress", async function (event) {
+    if (event.key === "Enter") {
+      const inputElement = document.getElementById("input");
+      const value = inputElement.value.trim();
+
+      if (value === "") {
+        return;
+      }
+
+      if (inputElement.name === "username") {
+        createUser(value);
+      } else {
+        sendAction(value);
+      }
+    }
+  });
+
+document.addEventListener("DOMContentLoaded", async function () {
+  userUuid = localStorage.getItem("userUuid");
+
+  if (userUuid) {
+    const user = await getUser(userUuid);
+    if (!user) {
+      localStorage.removeItem("userUuid");
+      return;
+    }
+    for (let i = 0; i < user.actions.results.length; i++) {
+      actions.push({
+        ...user.actions.results[i],
+        points: calculatePoints(
+          user.actions.results[i].severity,
+          user.actions.results[i].factor
+        ),
+      });
+    }
+    actions.forEach((action, index) => {
+      setTimeout(() => {
+        addLayer(action);
+      }, index * 250);
+    });
+    hideWelcomeMessage();
+  }
+});

@@ -1,5 +1,5 @@
 body {
-  background-color: #d9d9d9;
+  background-color: #e4e4e4;
   margin: 0;
   overflow: hidden;
   font-family: "system-ui" !important;
@@ -9,6 +9,10 @@ body {
   position: relative;
   width: 100%;
   height: 100vh;
+}
+
+.hide {
+  display: none;
 }
 
 .layer {
@@ -25,6 +29,7 @@ body {
   font-size: 1.5rem;
   position: absolute;
   white-space: nowrap; /* Ensure text doesn't wrap and cause background issues */
+  text-transform: uppercase;
 }
 
 h2.positive {
@@ -53,8 +58,26 @@ h2.negative {
   font-size: 1.5rem;
 }
 
-input {
+#reset {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #fff;
+  opacity: 0.2;
   z-index: 999999999;
+  display: none;
+}
+
+#reset:hover {
+  opacity: 0.85;
+}
+
+input {
+  z-index: 999999998;
   width: 90%;
   height: 60px;
   border-radius: 15px;
@@ -78,4 +101,58 @@ input:focus {
 
 input:hover {
   opacity: 0.85;
+}
+
+#welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#welcome h1 {
+  font-size: 6rem;
+  margin-bottom: 1rem;
+}
+
+#welcome h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chrome {
+  background: #222 -webkit-gradient(
+      linear,
+      left top,
+      right top,
+      from(#222),
+      to(#222),
+      color-stop(0.5, #fff)
+    ) 0 0 no-repeat;
+  background-image: -webkit-linear-gradient(
+    -40deg,
+    transparent 0%,
+    transparent 40%,
+    #fff 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  -webkit-background-size: 200px;
+  color: rgba(70, 188, 62, 0.9);
+  -webkit-background-clip: text;
+  -webkit-animation-name: shine;
+  -webkit-animation-duration: 5s;
+  -webkit-animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  text-shadow: 0 0px 0px rgba(255, 255, 255, 0.5);
+}
+
+@-webkit-keyframes shine {
+  0% {
+    background-position: -1000px;
+  }
+  100% {
+    background-position: 1000px;
+  }
 }
