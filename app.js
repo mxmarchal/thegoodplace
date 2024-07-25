@@ -1,105 +1,4 @@
-const actions = [
-  // {
-  //   id: 1,
-  //   action: "Eating a hamburger",
-  //   points: Math.floor(Math.random() * 20001) - 10000,
-  // },
-  // {
-  //   id: 2,
-  //   action: "Planting a tree",
-  //   points: Math.floor(Math.random() * 20001) - 10000,
-  // },
-  // {
-  //   id: 3,
-  //   action: "Using public transportation",
-  //   points: Math.floor(Math.random() * 20001) - 10000,
-  // },
-  // {
-  //   id: 4,
-  //   action: "Recycling plastic",
-  //   points: Math.floor(Math.random() * 20001) - 10000,
-  // },
-  // {
-  //   id: 5,
-  //   action: "Donating to charity",
-  //   points: Math.floor(Math.random() * 20001) - 10000,
-  // },
-  //   {
-  //     id: 6,
-  //     action: "Volunteering at a shelter",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 7,
-  //     action: "Buying local produce",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 8,
-  //     action: "Wasting food",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 9,
-  //     action: "Driving a car",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 10,
-  //     action: "Using a reusable bag",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 11,
-  //     action: "Throwing trash on the ground",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 12,
-  //     action: "Using a plastic straw",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 13,
-  //     action: "Supporting local businesses",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 14,
-  //     action: "Saving energy at home",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 15,
-  //     action: "Composting organic waste",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 16,
-  //     action: "Using a bike for commuting",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 17,
-  //     action: "Wasting water",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 18,
-  //     action: "Shopping online",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 19,
-  //     action: "Using solar energy",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-  //   {
-  //     id: 20,
-  //     action: "Avoiding fast fashion",
-  //     points: Math.floor(Math.random() * 20001) - 10000,
-  //   },
-];
+const actions = [];
 
 let userUuid = null;
 
@@ -315,6 +214,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         ),
       });
     }
+    actions.reverse();
     actions.forEach((action, index) => {
       setTimeout(() => {
         addLayer(action);
